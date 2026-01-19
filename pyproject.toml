@@ -1,0 +1,78 @@
+[project]
+name = "app"
+version = "0.1.0"
+description = ""
+requires-python = ">=3.12,<4.0"
+dependencies = [
+    "fastapi[standard]<1.0.0,>=0.114.2",
+    "pandas>2.0.0",
+    "psycopg[binary]<4.0.0,>=3.1.13",
+    "pydantic>2.0",
+    "sqlalchemy",
+]
+
+[project.optional-dependencies]
+docs = [
+  "mkdocs-material==9.6.14",
+  "sympy==1.14.0"
+]
+
+[tool.uv]
+dev-dependencies = [
+    "pre-commit==4.2.0",
+    "ruff==0.11.13",
+    "pytest<8.0.0,>=7.4.3",
+    "mypy<2.0.0,>=1.8.0",
+    "ruff<1.0.0,>=0.2.2",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.ruff]
+line-length = 100
+exclude = ["LICENSE"]
+lint.select = [
+  "F",      # Errors detected by Pyflakes
+  "E",      # Error detected by Pycodestyle
+  "W",      # Warning detected by Pycodestyle
+  "I",      # isort
+  "D",      # pydocstyle
+  "B",      # flake8-bugbear
+  "Q",      # flake8-quotes
+  "TID",    # flake8-tidy-imports
+  "C4",     # flake8-comprehensions
+  "BLE",    # flake8-blind-except
+  "UP",     # pyupgrade
+  "RUF100", # Report unused noqa directives
+]
+lint.ignore = [
+  # line too long -> we accept long comment lines; black gets rid of long code lines
+  "E501",
+  # Do not assign a lambda expression, use a def -> lambda expression assignments are convenient
+  "E731",
+  # allow I, O, l as variable names -> I is the identity matrix
+  "E741",
+  # Missing docstring in public package
+  "D104",
+  # Missing docstring in public module
+  "D100",
+  # Missing docstring in __init__
+  "D107",
+  # Errors from function calls in argument defaults. These are fine when the result is immutable.
+  "B008",
+  # __magic__ methods are are often self-explanatory, allow missing docstrings
+  "D105",
+  # first line should end with a period [Bug: doesn't work with single-line docstrings]
+  "D400",
+  # First line should be in imperative mood; try rephrasing
+  "D401",
+  ## Disable one in each pair of mutually incompatible rules
+  # We don't want a blank line before a class docstring
+  "D203",
+  # We want docstrings to start immediately after the opening triple quote
+  "D213",
+  # Bare except okay for passing
+  "E722",
+]
