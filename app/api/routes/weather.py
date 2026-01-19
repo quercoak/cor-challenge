@@ -6,6 +6,7 @@ from fastapi import APIRouter, Query
 from sqlalchemy import text
 
 from app.api.deps import SessionDep
+from app.core.types import SummaryReturn, WeatherReturn
 
 router = APIRouter(prefix="/weather", tags=["weather"])
 
@@ -33,26 +34,26 @@ async def weather_router(
     ),
     limit: int = Query(default=20, description="Records return limit"),
     offset: int = Query(default=0, description="Records returned offset from start"),
-):
-    """_summary_
+) -> list[WeatherReturn]:
+    """API router for weather station data endpoint
 
     Parameters
     ----------
     session : SessionDep
-        _description_
-    station_id : _type_, optional
-        _description_, by default Query( default=None, description="Station ID to select", openapi_examples={ "example": {"summary": "Station", "value": "USC00110072"}, "example2": {"summary": "Station 2", "value": "USC00111436"}, "null": {"summary": "Null", "value": None}, }, )
-    date : _type_, optional
-        _description_, by default Query( default=None, description="Date of records", openapi_examples={ "example": {"summary": "1/1/1985", "value": "1985-01-01"}, "example2": {"summary": "10/20/1985", "value": "1985-10-20"}, "null": {"summary": "null", "value": None}, }, )
+        Database session
+    station_id : str , optional
+        station_id to select
+    date : datetime , optional
+        date to select,
     limit : int, optional
-        _description_, by default Query(default=20, description="Records return limit")
+        pagination size
     offset : int, optional
-        _description_, by default Query(default=0, description="Records returned offset from start")
+        offsent for pagination
 
     Returns
     -------
-    _type_
-        _description_
+    WeatherReturn
+        JSON model
 
     """
     if station_id and date:
@@ -71,7 +72,7 @@ async def weather_router(
         t = text(f"SELECT * FROM station_data limit {limit} offset {offset};")
 
     result = session.execute(t)
-    return [row._asdict() for row in result]
+    return [WeatherReturn.model_validate(row._asdict()) for row in result]
 
 
 @router.get("/summary")
@@ -91,32 +92,32 @@ async def weather_stats_router(
         description="Year to select",
         openapi_examples={
             "example": {"summary": "1985", "value": 1985},
-            "example2": {"summary": "1985", "value": 2000},
+            "example2": {"summary": "2000", "value": 2000},
             "null": {"summary": "null", "value": None},
         },
     ),
     limit: int = Query(default=20),
     offset: int = Query(default=0),
-):
-    """_summary_
+) -> list[SummaryReturn]:
+    """API router to return summary statistics from weather stations
 
     Parameters
     ----------
     session : SessionDep
-        _description_
-    station_id : _type_, optional
-        _description_, by default Query( default=None, description="Station ID to select", openapi_examples={ "example": {"summary": "Station 1", "value": "USC00110072"}, "example2": {"summary": "Station 2", "value": "USC00111436"}, "null": {"summary": "Null", "value": None}, }, )
-    year : _type_, optional
-        _description_, by default Query( default=None, description="Year to select", openapi_examples={ "example": {"summary": "1985", "value": 1985}, "example2": {"summary": "1985", "value": 2000}, "null": {"summary": "null", "value": None}, }, )
+        Database session
+    station_id : str , optional
+        station_id to select
+    year : int , optional
+        year to select
     limit : int, optional
-        _description_, by default Query(default=20)
+        pagination size
     offset : int, optional
-        _description_, by default Query(default=0)
+        offsent for pagination
 
     Returns
     -------
-    _type_
-        _description_
+    SummaryReturn
+        JSON model
 
     """
     if station_id and year:
@@ -135,4 +136,4 @@ async def weather_stats_router(
         t = text(f"SELECT * FROM station_summary limit {limit} offset {offset};")
 
     result = session.execute(t)
-    return [row._asdict() for row in result]
+    return [SummaryReturn.model_validate(row._asdict()) for row in result]
