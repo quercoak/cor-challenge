@@ -25,6 +25,8 @@ source .venv/bin/activate
 
 uv is a lightweight, very fast package manager based on rust. Installing this repo with other managers may have unexpected outcomes, particularly when running `scripts` that read from the `app` package.
 
+This repo has only been run in a linux environment.
+
 ## Setting up the database
 To create database:
 
