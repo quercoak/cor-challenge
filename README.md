@@ -89,3 +89,15 @@ pytest tests
 ```
 
 <img src="docs/img/tests.png" alt="Pytest in CLI"/>
+
+## Notes
+This was a developed as a demo case. Here are some modifications I would make if continuing development or deploying to prod.
+
+Changes / if in production:
+- Use PostgreSQL. SQLite was used for development ease
+- Use Postgres materialized view for summary statistics
+- Use migration scripts (e.g. liquibase, alembic) for database creation (generated from SQLAlchemy for convenience in demo)
+- Use primary key based on station id - date combination (removes need for using constraint on duplicate columns)
+- Create index on station id and date in both tables
+- `year` in summary should be `date` type
+- Allow filtering in API by multiple stations or dates
